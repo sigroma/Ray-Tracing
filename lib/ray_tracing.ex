@@ -14,6 +14,8 @@ defmodule RayTracing do
     # Sample rate
     ns = 10
 
+    nsubprocess = :erlang.system_info(:logical_processors_available) * 2
+
     :random.seed(:erlang.system_time)
 
     scene = %Scene{
@@ -27,25 +29,12 @@ defmodule RayTracing do
       objects: Scene.gen_random_objects}
 
     {microsec, pixels} = :timer.tc fn ->
-      for y <- ny-1..0,
-          x <- 0..nx-1 do
-        # Samples filer to get antialiasing.
-        # The enumerator is too slow. I'm wondering if there is any optimization.
-        {r, g, b} = (for _ <- 0..ns-1, do: {(x + :random.uniform) / nx, (y + :random.uniform) / ny})
-                      |> Enum.map(&Camera.get_ray(scene.camera, &1))
-                      |> Enum.map(&color(&1, scene.objects, 0))
-                      # There is something wrong with random in `Task`.
-                      # Every `Task` shares the same seed.
-                      # It's still weird even reseeded in `Task`s.
-                      # And how can I take full use of the multicores?
-                      #|> Enum.map(&(Task.async(fn -> color(Camera.get_ray(scene.camera, &1), scene.objects, 0) end)))
-                      #|> Enum.map(&(Task.await/1))
-                      |> Enum.reduce(&Vec3.add/2)
-                      |> Vec3.scale(1.0 / ns)
-        # Enhances pixel.
-        {r, g, b} = {:math.sqrt(r), :math.sqrt(g), :math.sqrt(b)} |> Vec3.scale(255.99)
-        {trunc(r), trunc(g), trunc(b)}
-      end
+      (for y <- ny-1..0,
+           x <- 0..nx-1, do: {x, y})
+        |> Enum.chunk(process_chunk_size(nsubprocess, nx, ny))
+        |> Enum.map(&Task.async(fn -> partial(&1, nx, ny, ns, scene) end))
+        |> Enum.map(&yield_until_finish/1)
+        |> List.flatten
         |> Enum.chunk(nx)
     end
 
@@ -53,6 +42,43 @@ defmodule RayTracing do
 
     Imagineer.write(make_image(pixels, nx, ny), "./output.png")
     {:ok, self}
+  end
+
+  # Computes the chunk size to divide subprocess.
+  # `n` must divide the product of x and y.
+  defp process_chunk_size(n, x, y) when n > x * y or n < 0, do: x * y
+
+  defp process_chunk_size(n, x, y) do
+    if rem(x * y, n) == 0, do: div(x * y, n), else: process_chunk_size(n - 1, x, y)
+  end
+
+  # Waits for the async to finish.
+  # Every task must be finished correctly.
+  # I'm not sure this is a good style.
+  defp yield_until_finish(task) do
+    case Task.yield(task, 5000) do
+      nil -> yield_until_finish(task)
+      {:ok, res} -> res
+      _ -> raise "Sub task failes."
+    end
+  end
+
+  # Behaivor of the sub process, avoids nested capture.
+  defp partial(l, nx, ny, ns, scene) when is_list(l) do
+    :random.seed(:erlang.system_time)
+    Enum.map(l, &partial(&1, nx, ny, ns, scene))
+  end
+
+  defp partial({x, y}, nx, ny, ns, scene) do
+    # Samples to get antialiasing.
+    {r, g, b} = (for _ <- 0..ns-1, do: {(x + :random.uniform) / nx, (y + :random.uniform) / ny})
+                  |> Enum.map(&Camera.get_ray(scene.camera, &1))
+                  |> Enum.map(&color(&1, scene.objects, 0))
+                  |> Enum.reduce(&Vec3.add/2)
+                  |> Vec3.scale(1.0 / ns)
+    # Enhances pixels.
+    {r, g, b} = {:math.sqrt(r), :math.sqrt(g), :math.sqrt(b)} |> Vec3.scale(255.99)
+    {trunc(r), trunc(g), trunc(b)}
   end
 
   # Gets color from sampled ray.
