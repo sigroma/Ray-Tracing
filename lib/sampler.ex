@@ -10,7 +10,7 @@ defmodule RayTracing.Sampler do
   """
   @spec random_in_unit_sphere :: vec3
   def random_in_unit_sphere do
-    vec = {:random.uniform, :random.uniform, :random.uniform}
+    vec = {:random.uniform, :random.uniform, :random.uniform} |> Vec3.scale(2) |> Vec3.subtract(Vec3.create(1, 1, 1))
     if Vec3.length_squared(vec) < 1.0, do: vec, else: random_in_unit_sphere
   end
 
