@@ -26,7 +26,8 @@ defimpl RayTracing.Material, for: RayTracing.Material.Metal do
     if(Vec3.dot(scattered, n) > 0.0) do
       {:ok, material.albedo, Ray.create(p, scattered)}
     else
-      :error
+      # Fallback color.
+      Vec3.create
     end
   end
 end
