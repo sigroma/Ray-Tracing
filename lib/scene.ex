@@ -2,11 +2,12 @@ defmodule RayTracing.Scene do
   @moduledoc """
   Descripts objects in the world.
   """
+  alias Graphmath.Vec3
   alias RayTracing.Geometry.Sphere
+  alias RayTracing.Geometry.MovingSphere
   alias RayTracing.Material.Lambertian
   alias RayTracing.Material.Metal
   alias RayTracing.Material.Dielectric
-  alias Graphmath.Vec3
 
   defstruct camera: nil, objects: nil
 
@@ -24,9 +25,10 @@ defmodule RayTracing.Scene do
           Vec3.subtract(center, nearest_ball_position) |> Vec3.length > 0.9 do
         case :random.uniform do
           r when r < 0.8 ->
-            %Sphere{center: center,
-                    radius: 0.2,
-                    material: %Lambertian{albedo: gen_random_color}}
+            %MovingSphere{center0: center,
+                          center1: Vec3.add(center, Vec3.create(0.0, 0.5*:random.uniform, 0.0)),
+                          radius: 0.2,
+                          material: %Lambertian{albedo: gen_random_color}}
           r when r < 0.9 ->
             %Sphere{center: center,
                     radius: 0.2,

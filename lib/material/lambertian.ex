@@ -18,9 +18,9 @@ defimpl RayTracing.Material, for: RayTracing.Material.Lambertian do
   where   `attenuation` is the energy attenuation of incident light,
           `ray` is the new scaterring ray.
   """
-  def scatter(material, _ray, rec) do
+  def scatter(material, ray, rec) do
     {_, p, n, _} = rec
     target = p |> Vec3.add(n) |> Vec3.add(Sampler.random_in_unit_sphere)
-    {:ok, material.albedo, Ray.create(p, Vec3.subtract(target, p))}
+    {:ok, material.albedo, Ray.create(p, Vec3.subtract(target, p), Ray.time(ray))}
   end
 end

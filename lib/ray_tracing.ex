@@ -25,7 +25,9 @@ defmodule RayTracing do
                             20.0,
                             nx / ny,
                             0.1,
-                            10.0),
+                            10.0,
+                            0.0,
+                            1.0),
       objects: Scene.gen_random_objects}
 
     {microsec, pixels} = :timer.tc fn ->

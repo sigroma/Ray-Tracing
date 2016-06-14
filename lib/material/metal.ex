@@ -24,7 +24,7 @@ defimpl RayTracing.Material, for: RayTracing.Material.Metal do
                  |> Vec3.add(Vec3.scale(Sampler.random_in_unit_sphere, material.fuzz))
     # Not scatter to self.
     if(Vec3.dot(scattered, n) > 0.0) do
-      {:ok, material.albedo, Ray.create(p, scattered)}
+      {:ok, material.albedo, Ray.create(p, scattered, Ray.time(ray))}
     else
       # Fallback color.
       Vec3.create

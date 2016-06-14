@@ -3,7 +3,7 @@ defmodule RayTracing.Film.Camera do
   Simple camera model with focus.
   """
   @type vec3 :: {float, float, float}
-  @type ray :: {vec3, vec3}
+  @type ray :: {vec3, vec3, float}
 
   alias Graphmath.Vec3
   alias RayTracing.Linalg.Ray
@@ -15,6 +15,8 @@ defmodule RayTracing.Film.Camera do
             u: {0.0, 0.0, 0.0},
             v: {0.0, 0.0, 0.0},
             w: {0.0, 0.0, 0.0},
+            time0: 0.0,
+            time1: 1.0,
             lens_radius: 0
 
   @doc """
@@ -25,8 +27,8 @@ defmodule RayTracing.Film.Camera do
   `vup` is the camera's up direction.
   `vfov` is the field of view.
   """
-  @spec create(vec3, vec3, vec3, float, float, float, float) :: struct
-  def create(lookfrom, lookat, vup, vfov, aspect, aperture, focus_dist) do
+  @spec create(vec3, vec3, vec3, float, float, float, float, float, float) :: struct
+  def create(lookfrom, lookat, vup, vfov, aspect, aperture, focus_dist, t0, t1) do
     # `lens_radius` defines the exposure, but more `lens_radius` causes more fuzzy.
     # Set it to zero will degenerate the camera to the pinhole model.
     lens_radius = aperture / 2.0
@@ -54,6 +56,8 @@ defmodule RayTracing.Film.Camera do
                             u: u,
                             v: v,
                             w: w,
+                            time0: t0,
+                            time1: t1,
                             lens_radius: lens_radius}
   end
 
@@ -66,12 +70,14 @@ defmodule RayTracing.Film.Camera do
   def get_ray(camera, {s, t}) do
     {x, y, _z} = Vec3.scale(random_in_unit_dist, camera.lens_radius)
     offset = Vec3.scale(camera.u, x) |> Vec3.add(Vec3.scale(camera.v, y))
+    time = camera.time0 + :random.uniform * (camera.time1 - camera.time0)
     Ray.create(Vec3.add(camera.origin, offset),
                camera.lower_left_corner
                  |> Vec3.add(Vec3.scale(camera.horizontal, s))
                  |> Vec3.add(Vec3.scale(camera.vertical, t))
                  |> Vec3.subtract(camera.origin)
-                 |> Vec3.subtract(offset))
+                 |> Vec3.subtract(offset),
+               time)
   end
 
   # Gets a random position within uniformed dist

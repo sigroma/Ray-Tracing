@@ -41,9 +41,9 @@ defimpl RayTracing.Material, for: RayTracing.Material.Dielectric do
       end
 
     if :random.uniform < reflect_prob do
-      {:ok, Vec3.create(1.0, 1.0, 1.0), Ray.create(p, reflected)}
+      {:ok, Vec3.create(1.0, 1.0, 1.0), Ray.create(p, reflected, Ray.time(ray))}
     else
-      {:ok, Vec3.create(1.0, 1.0, 1.0), Ray.create(p, refracted)}
+      {:ok, Vec3.create(1.0, 1.0, 1.0), Ray.create(p, refracted, Ray.time(ray))}
     end
   end
 end
