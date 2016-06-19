@@ -73,3 +73,12 @@ defimpl RayTracing.Geometry.Hitable, for: List do
       end)
   end
 end
+
+defimpl RayTracing.Geometry.Boundable, for: List do
+  @doc """
+  Gets the bounding box of the objects list.
+  """
+  def bounding_box(objects, t0, t1) do
+    Enum.reduce(objects, :error, &RayTracing.Geometry.AABB.union(RayTracing.Geometry.Boundable.bounding_box(&1, t0, t1), &2))
+  end
+end

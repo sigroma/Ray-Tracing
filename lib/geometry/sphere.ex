@@ -46,3 +46,16 @@ defimpl RayTracing.Geometry.Hitable, for: RayTracing.Geometry.Sphere do
     end
   end
 end
+
+defimpl RayTracing.Geometry.Boundable, for: RayTracing.Geometry.Sphere do
+  alias Graphmath.Vec3
+
+  @doc """
+  Gets the bounding box of the sphere.
+  """
+  def bounding_box(sphere, _t0, _t1) do
+    %RayTracing.Geometry.AABB{
+      min: Vec3.subtract(sphere.center, Vec3.create(sphere.radius, sphere.radius, sphere.radius)),
+      max: Vec3.add(sphere.center, Vec3.create(sphere.radius, sphere.radius, sphere.radius))}
+  end
+end

@@ -48,3 +48,14 @@ defimpl RayTracing.Geometry.Hitable, for: RayTracing.Geometry.MovingSphere do
       |> RayTracing.Geometry.Hitable.hit(ray, t_min, t_max)
   end
 end
+
+defimpl RayTracing.Geometry.Boundable, for: RayTracing.Geometry.MovingSphere do
+  @doc """
+  Gets the bounding box of the moving sphere.
+  """
+  def bounding_box(moving_sphere, t0, t1) do
+    RayTracing.Geometry.AABB.union(
+      RayTracing.Geometry.Boundable.bounding_box(RayTracing.Geometry.MovingSphere.sphere(moving_sphere, t0)),
+      RayTracing.Geometry.Boundable.bounding_box(RayTracing.Geometry.MovingSphere.sphere(moving_sphere, t1)))
+  end
+end
