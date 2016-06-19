@@ -8,22 +8,22 @@ defmodule RayTracing.Geometry.SphereTest do
   end
   
   test "intersection with imaginary root", %{sphere: sphere} do
-    ray = RayTracing.Linalg.Ray.create({4.0, 4.0, 4.0}, {1.0, 1.0, 1.0})
-    assert RayTracing.Geometry.HitRecord.hit(sphere, ray, 0, 100) ==
+    ray = RayTracing.Linalg.Ray.create({4.0, 4.0, 4.0}, {1.0, 1.0, 1.0}, 0)
+    assert RayTracing.Geometry.Hitable.hit(sphere, ray, 0, 100) ==
       :error
   end
 
   test "intersection out of range", %{sphere: sphere} do
-    ray = RayTracing.Linalg.Ray.create({0.0, 0.0, 0.0}, {1.0, 1.0, 1.0})
-    assert RayTracing.Geometry.HitRecord.hit(sphere, ray, 0, 0.8) ==
+    ray = RayTracing.Linalg.Ray.create({0.0, 0.0, 0.0}, {1.0, 1.0, 1.0}, 0)
+    assert RayTracing.Geometry.Hitable.hit(sphere, ray, 0, 0.8) ==
       :error
-    assert RayTracing.Geometry.HitRecord.hit(sphere, ray, 2.0, 100) ==
+    assert RayTracing.Geometry.Hitable.hit(sphere, ray, 2.0, 100) ==
       :error
   end
 
   test "intersection within range", %{sphere: sphere} do
-    ray = RayTracing.Linalg.Ray.create({0.0, 0.0, 0.0}, {1.0, 1.0, 1.0})
-    assert RayTracing.Geometry.HitRecord.hit(sphere, ray, 0, 100) ==
+    ray = RayTracing.Linalg.Ray.create({0.0, 0.0, 0.0}, {1.0, 1.0, 1.0}, 0)
+    assert RayTracing.Geometry.Hitable.hit(sphere, ray, 0, 100) ==
       {1.0, {1.0, 1.0, 1.0}, {1.0 / @radius, 1.0 / @radius, 1.0 / @radius}, nil}
   end
 end
