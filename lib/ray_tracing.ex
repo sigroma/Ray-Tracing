@@ -87,7 +87,7 @@ defmodule RayTracing do
   defp color(_ray, _objects, depth) when depth >= 50, do: Vec3.create
 
   defp color(ray, objects, depth) do
-    (with {_, _, _, mat} = rec <- RayTracing.Geometry.HitRecord.hit(objects, ray, 0.001, 100000),
+    (with {_, _, _, mat} = rec <- RayTracing.Geometry.Hitable.hit(objects, ray, 0.001, 100000),
           {:ok, attenuation, scatterd} <- RayTracing.Material.scatter(mat, ray, rec),
           do: Vec3.multiply(color(scatterd, objects, depth+1), attenuation))
       |> wrap_color(ray)

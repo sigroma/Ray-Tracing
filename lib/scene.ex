@@ -56,7 +56,7 @@ defmodule RayTracing.Scene do
   end
 end
 
-defimpl RayTracing.Geometry.HitRecord, for: List do
+defimpl RayTracing.Geometry.Hitable, for: List do
   @doc """
   Gets the hitting info of objects list.
 
@@ -66,7 +66,7 @@ defimpl RayTracing.Geometry.HitRecord, for: List do
     Enum.reduce(objects, :error,
       fn o, acc ->
         closet = if acc == :error, do: t_max, else: elem(acc, 0)
-        case RayTracing.Geometry.HitRecord.hit(o, ray, t_min, closet) do
+        case RayTracing.Geometry.Hitable.hit(o, ray, t_min, closet) do
           {_, _, _, _} = rec -> rec
           _ -> acc
         end

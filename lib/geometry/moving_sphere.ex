@@ -28,7 +28,7 @@ defmodule RayTracing.Geometry.MovingSphere do
   end
 end
 
-defimpl RayTracing.Geometry.HitRecord, for: RayTracing.Geometry.MovingSphere do
+defimpl RayTracing.Geometry.Hitable, for: RayTracing.Geometry.MovingSphere do
   alias RayTracing.Linalg.Ray
 
   @doc """
@@ -45,6 +45,6 @@ defimpl RayTracing.Geometry.HitRecord, for: RayTracing.Geometry.MovingSphere do
     # The code here can be optimized by directly coping the intersection detection of `sphere` instead of creating a new sphere.
     # Is there any clean method without performance degradation?
     RayTracing.Geometry.MovingSphere.sphere(moving_sphere, Ray.time(ray))
-      |> RayTracing.Geometry.HitRecord.hit(ray, t_min, t_max)
+      |> RayTracing.Geometry.Hitable.hit(ray, t_min, t_max)
   end
 end

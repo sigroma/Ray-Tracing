@@ -6,7 +6,7 @@ defmodule RayTracing.Geometry.Sphere do
   defstruct center: {0.0, 0.0, 0.0}, radius: 1, material: nil
 end
 
-defimpl RayTracing.Geometry.HitRecord, for: RayTracing.Geometry.Sphere do
+defimpl RayTracing.Geometry.Hitable, for: RayTracing.Geometry.Sphere do
   alias Graphmath.Vec3
   alias RayTracing.Linalg
   alias RayTracing.Linalg.Ray
