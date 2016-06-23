@@ -5,11 +5,11 @@ defmodule RayTracing.Geometry.AABB do
 
   defstruct min: {0.0, 0.0, 0.0}, max: {1.0, 1.0, 1.0}
 
-  def union(:error, bbox) do
+  def union(nil, bbox) do
     bbox
   end
 
-  def union(bbox, :error) do
+  def union(bbox, nil) do
     bbox
   end
 

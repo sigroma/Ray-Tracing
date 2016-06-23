@@ -2,7 +2,7 @@ defmodule RayTracing.SceneTest do
   use ExUnit.Case
 
   test "bounding box of empty list" do
-    assert RayTracing.Geometry.Boundable.bounding_box([], 0, 1) == :error
+    assert RayTracing.Geometry.Boundable.bounding_box([], 0, 1) == nil
   end
 
   test "bounding box of list with objects" do

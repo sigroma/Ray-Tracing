@@ -5,6 +5,6 @@ end
 
 defimpl RayTracing.Geometry.Boundable, for: Any do
   def bounding_box(_, _, _) do
-    :error
+    nil
   end
 end

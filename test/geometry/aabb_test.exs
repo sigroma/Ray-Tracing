@@ -26,9 +26,9 @@ defmodule RayTracing.Geometry.AABBTest do
         max: {2, 1, 1}}
   end
 
-  test "union with `:error`", %{bbox: bbox} do
-    assert RayTracing.Geometry.AABB.union(:error, bbox) == bbox
-    assert RayTracing.Geometry.AABB.union(bbox, :error) == bbox
-    assert RayTracing.Geometry.AABB.union(:error, :error) == :error
+  test "union with `nil`", %{bbox: bbox} do
+    assert RayTracing.Geometry.AABB.union(nil, bbox) == bbox
+    assert RayTracing.Geometry.AABB.union(bbox, nil) == bbox
+    assert RayTracing.Geometry.AABB.union(nil, nil) == nil
   end
 end
