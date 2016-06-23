@@ -55,7 +55,7 @@ defimpl RayTracing.Geometry.Boundable, for: RayTracing.Geometry.MovingSphere do
   """
   def bounding_box(moving_sphere, t0, t1) do
     RayTracing.Geometry.AABB.union(
-      RayTracing.Geometry.Boundable.bounding_box(RayTracing.Geometry.MovingSphere.sphere(moving_sphere, t0)),
-      RayTracing.Geometry.Boundable.bounding_box(RayTracing.Geometry.MovingSphere.sphere(moving_sphere, t1)))
+      RayTracing.Geometry.Boundable.bounding_box(RayTracing.Geometry.MovingSphere.sphere(moving_sphere, t0), t0, t1),
+      RayTracing.Geometry.Boundable.bounding_box(RayTracing.Geometry.MovingSphere.sphere(moving_sphere, t1), t0, t1))
   end
 end
