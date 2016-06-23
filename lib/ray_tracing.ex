@@ -28,7 +28,7 @@ defmodule RayTracing do
                             10.0,
                             0.0,
                             1.0),
-      objects: Scene.gen_random_objects}
+      objects: RayTracing.Geometry.BVH.create(Scene.gen_random_objects, 0, 1)}
 
     {microsec, pixels} = :timer.tc fn ->
       (for y <- ny-1..0,
