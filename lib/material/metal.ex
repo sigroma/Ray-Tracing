@@ -3,7 +3,7 @@ defmodule RayTracing.Material.Metal do
   Specular material, which is like lambertian but more highlight with view direction.
   """
 
-  defstruct albedo: {1.0, 1.0, 1.0}, fuzz: 0.0
+  defstruct albedo: nil, fuzz: 0.0
 end
 
 defimpl RayTracing.Material, for: RayTracing.Material.Metal do
@@ -24,7 +24,9 @@ defimpl RayTracing.Material, for: RayTracing.Material.Metal do
                  |> Vec3.add(Vec3.scale(Sampler.random_in_unit_sphere, material.fuzz))
     # Not scatter to self.
     if(Vec3.dot(scattered, n) > 0.0) do
-      {:ok, material.albedo, Ray.create(p, scattered, Ray.time(ray))}
+      {:ok,
+       RayTracing.Texture.value(material.albedo, 0, 0, p),
+       Ray.create(p, scattered, Ray.time(ray))}
     else
       # Fallback color.
       Vec3.create

@@ -8,6 +8,7 @@ defmodule RayTracing.Scene do
   alias RayTracing.Material.Lambertian
   alias RayTracing.Material.Metal
   alias RayTracing.Material.Dielectric
+  alias RayTracing.Texture.ConstantTexture
 
   defstruct camera: nil, objects: nil
 
@@ -28,11 +29,12 @@ defmodule RayTracing.Scene do
             %MovingSphere{center0: center,
                           center1: Vec3.add(center, Vec3.create(0.0, 0.5*:random.uniform, 0.0)),
                           radius: 0.2,
-                          material: %Lambertian{albedo: gen_random_color}}
+                          material: %Lambertian{albedo: %ConstantTexture{color: gen_random_color}}}
           r when r < 0.9 ->
             %Sphere{center: center,
                     radius: 0.2,
-                    material: %Metal{albedo: gen_random_color, fuzz: 0.5*:random.uniform}}
+                    material: %Metal{albedo: %ConstantTexture{color: gen_random_color},
+                                     fuzz: 0.5*:random.uniform}}
           _ ->
             %Sphere{center: center,
                     radius: 0.2,
@@ -40,13 +42,21 @@ defmodule RayTracing.Scene do
         end
       end
     objects = List.insert_at(objects, 0,
-      %Sphere{center: Vec3.create(0.0, -1000.0, 0.0), radius: 1000.0, material: %Lambertian{albedo: {0.5, 0.5, 0.5}}})
+      %Sphere{center: Vec3.create(0.0, -1000.0, 0.0),
+              radius: 1000.0,
+              material: %Lambertian{albedo: %ConstantTexture{color: {0.5, 0.5, 0.5}}}})
     objects = List.insert_at(objects, 0,
-      %Sphere{center: Vec3.create(0.0, 1.0, 0.0), radius: 1.0, material: %Dielectric{ref_idx: 1.5}})
+      %Sphere{center: Vec3.create(0.0, 1.0, 0.0),
+              radius: 1.0,
+              material: %Dielectric{ref_idx: 1.5}})
     objects = List.insert_at(objects, 0,
-      %Sphere{center: Vec3.create(-4.0, 1.0, 0.0), radius: 1.0, material: %Lambertian{albedo: {0.4, 0.2, 0.1}}})
+      %Sphere{center: Vec3.create(-4.0, 1.0, 0.0),
+              radius: 1.0,
+              material: %Lambertian{albedo: %ConstantTexture{color: {0.4, 0.2, 0.1}}}})
     List.insert_at(objects, 0,
-      %Sphere{center: Vec3.create(4.0, 1.0, 0.0), radius: 1.0, material: %Metal{albedo: {0.7, 0.6, 0.5}}})
+      %Sphere{center: Vec3.create(4.0, 1.0, 0.0),
+              radius: 1.0,
+              material: %Metal{albedo: %ConstantTexture{color: {0.7, 0.6, 0.5}}}})
   end
 
   defp gen_random_color do

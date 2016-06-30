@@ -3,7 +3,7 @@ defmodule RayTracing.Material.Lambertian do
   Lambertian is a diffuse model, which reflects light with same energy in all directions.
   """
 
-  defstruct albedo: {1.0, 1.0, 1.0}
+  defstruct albedo: nil
 end
 
 defimpl RayTracing.Material, for: RayTracing.Material.Lambertian do
@@ -21,6 +21,8 @@ defimpl RayTracing.Material, for: RayTracing.Material.Lambertian do
   def scatter(material, ray, rec) do
     {_, p, n, _} = rec
     target = p |> Vec3.add(n) |> Vec3.add(Sampler.random_in_unit_sphere)
-    {:ok, material.albedo, Ray.create(p, Vec3.subtract(target, p), Ray.time(ray))}
+    {:ok,
+     RayTracing.Texture.value(material.albedo, 0, 0, p),
+     Ray.create(p, Vec3.subtract(target, p), Ray.time(ray))}
   end
 end
