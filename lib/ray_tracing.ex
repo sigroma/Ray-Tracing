@@ -12,7 +12,7 @@ defmodule RayTracing do
     # Film's height
     ny = 80
     # Sample rate
-    ns = 10
+    ns = 400
 
     nsubprocess = :erlang.system_info(:logical_processors_available) * 2
 
@@ -28,7 +28,8 @@ defmodule RayTracing do
                             10.0,
                             0.0,
                             1.0),
-      objects: RayTracing.Geometry.BVH.create(Scene.gen_random_objects, 0, 1)}
+      #objects: RayTracing.Geometry.BVH.create(Scene.gen_random_objects, 0, 1)}
+      objects: RayTracing.Geometry.BVH.create(Scene.two_test_sphere, 0, 1)}
 
     {microsec, pixels} = :timer.tc fn ->
       (for y <- ny-1..0,

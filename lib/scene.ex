@@ -9,6 +9,7 @@ defmodule RayTracing.Scene do
   alias RayTracing.Material.Metal
   alias RayTracing.Material.Dielectric
   alias RayTracing.Texture.ConstantTexture
+  alias RayTracing.Texture.NoiseTexture
 
   defstruct camera: nil, objects: nil
 
@@ -57,6 +58,19 @@ defmodule RayTracing.Scene do
       %Sphere{center: Vec3.create(4.0, 1.0, 0.0),
               radius: 1.0,
               material: %Metal{albedo: %ConstantTexture{color: {0.7, 0.6, 0.5}}}})
+  end
+
+  @doc """
+  Debuging spheres.
+  """
+  def two_test_sphere do
+    perlin_data = RayTracing.Noise.Perlin.create
+    [%Sphere{center: Vec3.create(0.0, -1000.0, 0.0),
+             radius: 1000.0,
+             material: %Lambertian{albedo: %NoiseTexture{perlin: perlin_data, scale: 4}}},
+     %Sphere{center: Vec3.create(4.0, 1.0, 1.0),
+             radius: 1.0,
+             material: %Lambertian{albedo: %NoiseTexture{perlin: perlin_data, scale: 8}}}]
   end
 
   defp gen_random_color do
