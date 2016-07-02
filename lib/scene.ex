@@ -70,7 +70,7 @@ defmodule RayTracing.Scene do
              material: %Lambertian{albedo: %NoiseTexture{perlin: perlin_data, scale: 4}}},
      %Sphere{center: Vec3.create(4.0, 1.0, 1.0),
              radius: 1.0,
-             material: %Lambertian{albedo: %NoiseTexture{perlin: perlin_data, scale: 8}}}]
+             material: %Lambertian{albedo: %NoiseTexture{perlin: perlin_data, scale: 4}}}]
   end
 
   defp gen_random_color do
