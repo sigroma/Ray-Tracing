@@ -19,7 +19,7 @@ defimpl RayTracing.Material, for: RayTracing.Material.Dielectric do
           `ray` is the new scaterring ray.
   """
   def scatter(material, ray, rec) do
-    {_, p, n, _} = rec
+    {_, p, _, n, _} = rec
     rd = Ray.direction(ray)
     reflected = Sampler.reflect(rd, n)
 
@@ -45,5 +45,9 @@ defimpl RayTracing.Material, for: RayTracing.Material.Dielectric do
     else
       {:ok, Vec3.create(1.0, 1.0, 1.0), Ray.create(p, refracted, Ray.time(ray))}
     end
+  end
+
+  def emitted(_, _, _, _) do
+    Vec3.create
   end
 end

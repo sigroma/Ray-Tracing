@@ -9,22 +9,20 @@ defmodule RayTracing.Geometry.SphereTest do
   
   test "intersection with imaginary root", %{sphere: sphere} do
     ray = RayTracing.Linalg.Ray.create({4.0, 4.0, 4.0}, {1.0, 1.0, 1.0}, 0)
-    assert RayTracing.Geometry.Hitable.hit(sphere, ray, 0, 100) ==
-      :error
+    assert RayTracing.Geometry.Hitable.hit(sphere, ray, 0, 100) == :error
   end
 
   test "intersection out of range", %{sphere: sphere} do
     ray = RayTracing.Linalg.Ray.create({0.0, 0.0, 0.0}, {1.0, 1.0, 1.0}, 0)
-    assert RayTracing.Geometry.Hitable.hit(sphere, ray, 0, 0.8) ==
-      :error
-    assert RayTracing.Geometry.Hitable.hit(sphere, ray, 2.0, 100) ==
-      :error
+    assert RayTracing.Geometry.Hitable.hit(sphere, ray, 0, 0.8) == :error
+    assert RayTracing.Geometry.Hitable.hit(sphere, ray, 2.0, 100) == :error
   end
 
   test "intersection within range", %{sphere: sphere} do
     ray = RayTracing.Linalg.Ray.create({0.0, 0.0, 0.0}, {1.0, 1.0, 1.0}, 0)
     assert RayTracing.Geometry.Hitable.hit(sphere, ray, 0, 100) ==
-      {1.0, {1.0, 1.0, 1.0}, {1.0 / @radius, 1.0 / @radius, 1.0 / @radius}, nil}
+      {1.0, {1.0, 1.0, 1.0}, {3.0 / 8.0, :math.asin(1 / @radius) / :math.pi + 0.5},
+       {1.0 / @radius, 1.0 / @radius, 1.0 / @radius}, nil}
   end
 
   test "bounding box of sphere", %{sphere: sphere} do

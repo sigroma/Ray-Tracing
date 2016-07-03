@@ -3,7 +3,6 @@ defmodule RayTracing do
   alias Imagineer.Image.PNG
   alias Graphmath.Vec3
   alias RayTracing.Film.Camera
-  alias RayTracing.Linalg.Ray
   alias RayTracing.Scene
 
   def start(_type, _args) do
@@ -29,7 +28,7 @@ defmodule RayTracing do
                             0.0,
                             1.0),
       #objects: RayTracing.Geometry.BVH.create(Scene.gen_random_objects, 0, 1)}
-      objects: RayTracing.Geometry.BVH.create(Scene.two_test_sphere, 0, 1)}
+      objects: RayTracing.Geometry.BVH.create(Scene.gen_test_objects, 0, 1)}
 
     {microsec, pixels} = :timer.tc fn ->
       (for y <- ny-1..0,
@@ -88,21 +87,15 @@ defmodule RayTracing do
   defp color(_ray, _objects, depth) when depth >= 50, do: Vec3.create
 
   defp color(ray, objects, depth) do
-    (with {_, _, _, mat} = rec <- RayTracing.Geometry.Hitable.hit(objects, ray, 0.001, 100000),
-          {:ok, attenuation, scatterd} <- RayTracing.Material.scatter(mat, ray, rec),
-          do: Vec3.multiply(color(scatterd, objects, depth+1), attenuation))
-      |> wrap_color(ray)
-  end
-
-  defp wrap_color(color, ray) do
-    case color do
-      {_, _, _} = col -> col
-      _ ->
-        # Tricky light.
-        unit_direction = Ray.direction(ray) |> Vec3.normalize
-        # Transforms to [0, 1].
-        t = 0.5 * (elem(unit_direction, 1) + 1.0)
-        Vec3.lerp(Vec3.create(1.0, 1.0, 1.0), Vec3.create(0.5, 0.7, 1.0), t)
+    case RayTracing.Geometry.Hitable.hit(objects, ray, 0.001, 100000) do
+      {_, p, {u, v}, _, mat} = rec ->
+        emitted = RayTracing.Material.emitted(mat, u, v, p)
+        case RayTracing.Material.scatter(mat, ray, rec) do
+          {:ok, attenuation, scatterd} -> Vec3.multiply(color(scatterd, objects, depth+1), attenuation)
+            |> Vec3.add(emitted)
+          _ -> emitted
+        end
+      _ -> Vec3.create
     end
   end
 

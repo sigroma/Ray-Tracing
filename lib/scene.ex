@@ -5,9 +5,11 @@ defmodule RayTracing.Scene do
   alias Graphmath.Vec3
   alias RayTracing.Geometry.Sphere
   alias RayTracing.Geometry.MovingSphere
+  alias RayTracing.Geometry.Rect
   alias RayTracing.Material.Lambertian
   alias RayTracing.Material.Metal
   alias RayTracing.Material.Dielectric
+  alias RayTracing.Material.DiffuseLight
   alias RayTracing.Texture.ConstantTexture
   alias RayTracing.Texture.NoiseTexture
 
@@ -61,16 +63,21 @@ defmodule RayTracing.Scene do
   end
 
   @doc """
-  Debuging spheres.
+  Debuging objects.
   """
-  def two_test_sphere do
+  def gen_test_objects do
     perlin_data = RayTracing.Noise.Perlin.create
     [%Sphere{center: Vec3.create(0.0, -1000.0, 0.0),
              radius: 1000.0,
              material: %Lambertian{albedo: %NoiseTexture{perlin: perlin_data, scale: 4}}},
-     %Sphere{center: Vec3.create(4.0, 1.0, 1.0),
+     %Sphere{center: Vec3.create(3.0, 1.0, 1.0),
              radius: 1.0,
-             material: %Lambertian{albedo: %NoiseTexture{perlin: perlin_data, scale: 4}}}]
+             material: %Lambertian{albedo: %NoiseTexture{perlin: perlin_data, scale: 4}}},
+     %Sphere{center: Vec3.create(3.0, 3.1, 1.0),
+             radius: 1.0,
+             material: %DiffuseLight{texture: %ConstantTexture{color: {1, 1, 1}}}},
+     %Rect{x0: 3.5, x1: 4.5, y0: 0.5, y1: 1.5, z: -0.3,
+           material: %DiffuseLight{texture: %ConstantTexture{color: {1, 1, 1}}}}]
   end
 
   defp gen_random_color do
@@ -91,7 +98,7 @@ defimpl RayTracing.Geometry.Hitable, for: List do
       fn o, acc ->
         closet = if acc == :error, do: t_max, else: elem(acc, 0)
         case RayTracing.Geometry.Hitable.hit(o, ray, t_min, closet) do
-          {_, _, _, _} = rec -> rec
+          {_, _, _, _, _} = rec -> rec
           _ -> acc
         end
       end)

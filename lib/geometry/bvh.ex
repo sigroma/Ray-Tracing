@@ -61,7 +61,7 @@ defimpl RayTracing.Geometry.Hitable, for: RayTracing.Geometry.BVH do
     case {lrec, rrec} do
       {:error, r} -> r
       {l, :error} -> l
-      {{lt, _, _, _} = l, {rt, _, _, _} = r} -> if lt < rt, do: l, else: r
+      {{lt, _, _, _, _} = l, {rt, _, _, _, _} = r} -> if lt < rt, do: l, else: r
     end
   end
 end

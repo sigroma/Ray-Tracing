@@ -19,10 +19,14 @@ defimpl RayTracing.Material, for: RayTracing.Material.Lambertian do
           `ray` is the new scaterring ray.
   """
   def scatter(material, ray, rec) do
-    {_, p, n, _} = rec
+    {_, p, {u, v}, n, _} = rec
     target = p |> Vec3.add(n) |> Vec3.add(Sampler.random_in_unit_sphere)
     {:ok,
-     RayTracing.Texture.value(material.albedo, 0, 0, p),
+     RayTracing.Texture.value(material.albedo, u, v, p),
      Ray.create(p, Vec3.subtract(target, p), Ray.time(ray))}
+  end
+
+  def emitted(_, _, _, _) do
+    Vec3.create
   end
 end

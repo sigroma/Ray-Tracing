@@ -34,9 +34,10 @@ defimpl RayTracing.Geometry.Hitable, for: RayTracing.Geometry.MovingSphere do
   @doc """
   Gets the hitting info.
 
-  Returns `{t, p, n, m}`,
+  Returns `{t, p, uv, n, m}`,
   where `t` is the hitting point's parameter on ray,
         `p` is the hitting point,
+        `uv` is the hitting point's uv,
         `n` is the normal,
         `m` is the material.
   """

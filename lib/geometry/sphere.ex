@@ -2,21 +2,36 @@ defmodule RayTracing.Geometry.Sphere do
   @moduledoc """
   Sphere with center, radius and material.
   """
+  @type vec2 :: {float, float}
+  @type vec3 :: {float, float, float}
 
   defstruct center: {0.0, 0.0, 0.0}, radius: 1, material: nil
+
+  @doc """
+  Gets the normalized point's uv.
+  """
+  @spec get_uv(vec3) :: vec2
+  def get_uv({x, y, z}) do
+    phi = :math.atan2(z, x)
+    theta = :math.asin(y)
+    {1 - (phi + :math.pi) / (2 * :math.pi),
+     (theta + :math.pi / 2) / :math.pi}
+  end
 end
 
 defimpl RayTracing.Geometry.Hitable, for: RayTracing.Geometry.Sphere do
   alias Graphmath.Vec3
   alias RayTracing.Linalg
   alias RayTracing.Linalg.Ray
+  alias RayTracing.Geometry.Sphere
 
   @doc """
   Gets the hitting info.
 
-  Returns `{t, p, n, m}`,
+  Returns `{t, p, uv, n, m}`,
   where `t` is the hitting point's parameter on ray,
         `p` is the hitting point,
+        `uv` is the hitting point's uv,
         `n` is the normal,
         `m` is the material.
   """
@@ -37,11 +52,13 @@ defimpl RayTracing.Geometry.Hitable, for: RayTracing.Geometry.Sphere do
       # Checks the first position
       {x, _y} when x < t_max and x > t_min ->
         p = Ray.point_at(ray, x)
-        {x, p, Vec3.subtract(p, sphere.center) |> Vec3.scale(1.0 / sphere.radius), sphere.material}
+        n = Vec3.subtract(p, sphere.center) |> Vec3.scale(1.0 / sphere.radius)
+        {x, p, Sphere.get_uv(n), n, sphere.material}
       # Checks the second position
       {_x, y} when y < t_max and y > t_min ->
         p = Ray.point_at(ray, y)
-        {y, p, Vec3.subtract(p, sphere.center) |> Vec3.scale(1.0 / sphere.radius), sphere.material}
+        n = Vec3.subtract(p, sphere.center) |> Vec3.scale(1.0 / sphere.radius)
+        {y, p, Sphere.get_uv(n), n, sphere.material}
       _ -> :error
     end
   end

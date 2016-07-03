@@ -19,17 +19,21 @@ defimpl RayTracing.Material, for: RayTracing.Material.Metal do
           `ray` is the new scaterring ray.
   """
   def scatter(material, ray, rec) do
-    {_, p, n, _} = rec
+    {_, p, {u, v}, n, _} = rec
     scattered = Sampler.reflect(Vec3.normalize(Ray.direction(ray)), n)
                  |> Vec3.add(Vec3.scale(Sampler.random_in_unit_sphere, material.fuzz))
     # Not scatter to self.
     if(Vec3.dot(scattered, n) > 0.0) do
       {:ok,
-       RayTracing.Texture.value(material.albedo, 0, 0, p),
+       RayTracing.Texture.value(material.albedo, u, v, p),
        Ray.create(p, scattered, Ray.time(ray))}
     else
       # Fallback color.
       Vec3.create
     end
+  end
+
+  def emitted(_, _, _, _) do
+    Vec3.create
   end
 end
