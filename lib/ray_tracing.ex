@@ -7,11 +7,11 @@ defmodule RayTracing do
 
   def start(_type, _args) do
     # Film's width
-    nx = 160
+    nx = 120
     # Film's height
-    ny = 160
+    ny = 120
     # Sample rate
-    ns = 400
+    ns = 1000
 
     nsubprocess = :erlang.system_info(:logical_processors_available) * 2
 

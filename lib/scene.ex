@@ -9,6 +9,9 @@ defmodule RayTracing.Scene do
   alias RayTracing.Geometry.YZRect
   alias RayTracing.Geometry.XZRect
   alias RayTracing.Geometry.FlipNormals
+  alias RayTracing.Geometry.Translate
+  alias RayTracing.Geometry.RotateY
+  alias RayTracing.Geometry.Box
   alias RayTracing.Material.Lambertian
   alias RayTracing.Material.Metal
   alias RayTracing.Material.Dielectric
@@ -93,7 +96,11 @@ defmodule RayTracing.Scene do
      %XZRect{x0: 213, x1: 343, z0: 227, z1: 332, y: 554, material: light},
      %FlipNormals{geometry: %XZRect{x0: 0, x1: 555, z0: 0, z1: 555, y: 555, material: white}},
      %XZRect{x0: 0, x1: 555, z0: 0, z1: 555, y: 0, material: white},
-     %FlipNormals{geometry: %XYRect{x0: 0, x1: 555, y0: 0, y1: 555, z: 555, material: white}}]
+     %FlipNormals{geometry: %XYRect{x0: 0, x1: 555, y0: 0, y1: 555, z: 555, material: white}},
+     %Translate{geometry: RotateY.create(Box.create(Vec3.create, Vec3.create(165, 165, 165), white), 18),
+                offset: Vec3.create(130, 0, 65)},
+     %Translate{geometry: RotateY.create(Box.create(Vec3.create, Vec3.create(165, 330, 165), white), -15),
+                offset: Vec3.create(265, 0, 295)}]
   end
 
   defp gen_random_color do
