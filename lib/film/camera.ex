@@ -62,6 +62,21 @@ defmodule RayTracing.Film.Camera do
   end
 
   @doc """
+  The camera of the cornell-box scene.
+  """
+  def create_cornell(aspect) do
+    create(Vec3.create(278, 278, -800),
+           Vec3.create(278, 278, 0),
+           Vec3.create(0, 10, 0),
+           40.0,
+           aspect,
+           0.0,
+           10.0,
+           0.0,
+           1.0)
+  end
+
+  @doc """
   Gets a random ray from camera.
 
   Uses random samples to get depth of field.

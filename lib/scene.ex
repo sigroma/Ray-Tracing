@@ -5,7 +5,10 @@ defmodule RayTracing.Scene do
   alias Graphmath.Vec3
   alias RayTracing.Geometry.Sphere
   alias RayTracing.Geometry.MovingSphere
-  alias RayTracing.Geometry.Rect
+  alias RayTracing.Geometry.XYRect
+  alias RayTracing.Geometry.YZRect
+  alias RayTracing.Geometry.XZRect
+  alias RayTracing.Geometry.FlipNormals
   alias RayTracing.Material.Lambertian
   alias RayTracing.Material.Metal
   alias RayTracing.Material.Dielectric
@@ -76,8 +79,21 @@ defmodule RayTracing.Scene do
      %Sphere{center: Vec3.create(3.0, 3.1, 1.0),
              radius: 1.0,
              material: %DiffuseLight{texture: %ConstantTexture{color: {1, 1, 1}}}},
-     %Rect{x0: 3.5, x1: 4.5, y0: 0.5, y1: 1.5, z: -0.3,
-           material: %DiffuseLight{texture: %ConstantTexture{color: {1, 1, 1}}}}]
+     %XYRect{x0: 3.5, x1: 4.5, y0: 0.5, y1: 1.5, z: -0.3,
+             material: %DiffuseLight{texture: %ConstantTexture{color: {1, 1, 1}}}}]
+  end
+
+  def gen_cornell_box do
+    red = %Lambertian{albedo: %ConstantTexture{color: {0.65, 0.05, 0.05}}}
+    white = %Lambertian{albedo: %ConstantTexture{color: {0.73, 0.73, 0.73}}}
+    green = %Lambertian{albedo: %ConstantTexture{color: {0.12, 0.45, 0.15}}}
+    light = %DiffuseLight{texture: %ConstantTexture{color: {15, 15, 15}}}
+    [%FlipNormals{geometry: %YZRect{y0: 0, y1: 555, z0: 0, z1: 555, x: 555, material: green}},
+     %YZRect{y0: 0, y1: 555, z0: 0, z1: 555, x: 0, material: red},
+     %XZRect{x0: 213, x1: 343, z0: 227, z1: 332, y: 554, material: light},
+     %FlipNormals{geometry: %XZRect{x0: 0, x1: 555, z0: 0, z1: 555, y: 555, material: white}},
+     %XZRect{x0: 0, x1: 555, z0: 0, z1: 555, y: 0, material: white},
+     %FlipNormals{geometry: %XYRect{x0: 0, x1: 555, y0: 0, y1: 555, z: 555, material: white}}]
   end
 
   defp gen_random_color do

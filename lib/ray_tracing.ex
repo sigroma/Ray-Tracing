@@ -7,9 +7,9 @@ defmodule RayTracing do
 
   def start(_type, _args) do
     # Film's width
-    nx = 120
+    nx = 160
     # Film's height
-    ny = 80
+    ny = 160
     # Sample rate
     ns = 400
 
@@ -18,17 +18,18 @@ defmodule RayTracing do
     :random.seed(:erlang.system_time)
 
     scene = %Scene{
-      camera: Camera.create(Vec3.create(13.0, 2.0, 3.0),
-                            Vec3.create,
-                            Vec3.create(0.0, 1.0, 0.0),
-                            20.0,
-                            nx / ny,
-                            0.1,
-                            10.0,
-                            0.0,
-                            1.0),
+      #camera: Camera.create(Vec3.create(13.0, 2.0, 3.0),
+                            #Vec3.create,
+                            #Vec3.create(0.0, 1.0, 0.0),
+                            #20.0,
+                            #nx / ny,
+                            #0.1,
+                            #10.0,
+                            #0.0,
+                            #1.0),
       #objects: RayTracing.Geometry.BVH.create(Scene.gen_random_objects, 0, 1)}
-      objects: RayTracing.Geometry.BVH.create(Scene.gen_test_objects, 0, 1)}
+      camera: Camera.create_cornell(nx / ny),
+      objects: RayTracing.Geometry.BVH.create(Scene.gen_cornell_box, 0, 1)}
 
     {microsec, pixels} = :timer.tc fn ->
       (for y <- ny-1..0,
