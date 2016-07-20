@@ -1,3 +1,5 @@
+[![Cornell Box](http://i.imgur.com/wYVdUls.png)](http://i.imgur.com/wYVdUls.png)
+
 # Ray Tracing
 
 Port of [Ray Tracing In One Weekend](https://github.com/petershirley/raytracinginoneweekend) by Peter Shirley.
